@@ -246,6 +246,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   created: function created() {
     var _this = this;
@@ -267,6 +269,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       },
       File: [],
       FileEditar: [],
+      ItemEscogido: {
+        id: 1,
+        Nombre: 'leyo'
+      },
       date: new Date().toISOString().substr(0, 10),
       Evento: {
         NombreEvento: '',
@@ -315,6 +321,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       data.append('Fecha', NuevoEvento.Fecha);
       data.append('Imagen', this.File);
       data.append('Descripcion', NuevoEvento.Descripcion);
+      NuevoEvento.IdRestaurante = this.ItemEscogido.id;
       data.append('IdRestaurante', NuevoEvento.IdRestaurante);
       axios.post('/Home/Create', data, {
         headers: {
@@ -325,6 +332,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         console.log(notaServidor);
         axios.get('/Homeo').then(function (res) {
           _this2.Eventos = res.data;
+          _this2.File = [];
+          _this2.date = new Date().toISOString().substr(0, 10);
         });
       });
       this.StateNuevo = false;
@@ -346,10 +355,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       console.log(this.idEditar.id);
       this.idEditar.index = index;
       this.StateEditar = true;
-      this.EventoDemo.NombreEvento = this.Eventos[index].NombreEvento;
-      this.EventoDemo.Fecha = this.Eventos[index].Fecha;
-      this.EventoDemo.Descripcion = this.Eventos[index].Descripcion;
-      this.EventoDemo.IdRestaurante = this.Eventos[index].IdRestaurante;
+      this.Evento.NombreEvento = this.Eventos[index].NombreEvento;
+      this.Evento.Fecha = this.Eventos[index].Fecha;
+      this.Evento.Descripcion = this.Eventos[index].Descripcion;
+      this.Evento.IdRestaurante = this.Eventos[index].IdRestaurante;
     },
     cancelar: function cancelar() {
       this.Evento = {
@@ -366,6 +375,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       EventoGuardar.Fecha = this.date;
       EventoGuardar.Imagen = this.FileEditar;
+      EventoGuardar.IdRestaurante = this.ItemEscogido.id;
       var param = {
         NombreEvento: EventoGuardar.NombreEvento,
         Fecha: EventoGuardar.Fecha,
@@ -385,10 +395,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       console.log(this.idEditar.id);
       this.idEditar.index = index;
       this.StateDemo = true;
-      this.Evento.NombreEvento = this.Eventos[index].NombreEvento;
-      this.Evento.Fecha = this.Eventos[index].Fecha;
-      this.Evento.Descripcion = this.Eventos[index].Descripcion;
-      this.Evento.IdRestaurante = this.Eventos[index].IdRestaurante;
+      this.EventoDemo.NombreEvento = this.Eventos[index].NombreEvento;
+      this.EventoDemo.Fecha = this.Eventos[index].Fecha;
+      this.EventoDemo.Descripcion = this.Eventos[index].Descripcion;
+      this.EventoDemo.Imagen = this.Eventos[index].Imagen;
+      this.EventoDemo.IdRestaurante = this.Eventos[index].IdRestaurante;
     }
   }
 });
@@ -600,15 +611,17 @@ var render = function() {
                                     items: _vm.itemsSelect,
                                     "item-text": "Nombre",
                                     "item-value": "id",
-                                    label: "restaurante",
+                                    label: "ItemEscogido",
+                                    "persistent-hint": "",
+                                    "return-object": "",
                                     required: ""
                                   },
                                   model: {
-                                    value: _vm.Evento.IdRestaurante,
+                                    value: _vm.ItemEscogido,
                                     callback: function($$v) {
-                                      _vm.$set(_vm.Evento, "IdRestaurante", $$v)
+                                      _vm.ItemEscogido = $$v
                                     },
-                                    expression: "Evento.IdRestaurante"
+                                    expression: "ItemEscogido"
                                   }
                                 })
                               ],
@@ -699,17 +712,6 @@ var render = function() {
         ],
         1
       ),
-      _vm._v(" "),
-      _c("v-dialog", {
-        attrs: { persistent: "", "max-width": "700px" },
-        model: {
-          value: _vm.StateNuevo,
-          callback: function($$v) {
-            _vm.StateNuevo = $$v
-          },
-          expression: "StateNuevo"
-        }
-      }),
       _vm._v(" "),
       _c(
         "v-dialog",
@@ -810,15 +812,17 @@ var render = function() {
                                     items: _vm.itemsSelect,
                                     "item-text": "Nombre",
                                     "item-value": "id",
-                                    label: "restaurante",
+                                    label: "ItemEscogido",
+                                    "persistent-hint": "",
+                                    "return-object": "",
                                     required: ""
                                   },
                                   model: {
-                                    value: _vm.Evento.IdRestaurante,
+                                    value: _vm.ItemEscogido,
                                     callback: function($$v) {
-                                      _vm.$set(_vm.Evento, "IdRestaurante", $$v)
+                                      _vm.ItemEscogido = $$v
                                     },
-                                    expression: "Evento.IdRestaurante"
+                                    expression: "ItemEscogido"
                                   }
                                 })
                               ],
@@ -905,21 +909,25 @@ var render = function() {
                   staticClass: "white--text align-end",
                   attrs: {
                     height: "200px",
-                    src: "https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+                    src: "/img/categorias/" + _vm.EventoDemo.Imagen
                   }
                 },
-                [_c("v-card-title", [_vm._v("Top 10 Australian beaches")])],
+                [
+                  _c("v-card-title", [
+                    _vm._v(_vm._s(_vm.EventoDemo.NombreEvento))
+                  ])
+                ],
                 1
               ),
               _vm._v(" "),
               _c("v-card-subtitle", { staticClass: "pb-0" }, [
-                _vm._v("\n      Number 10\n    ")
+                _vm._v("\n     " + _vm._s(_vm.EventoDemo.Fecha) + "\n    ")
               ]),
               _vm._v(" "),
               _c("v-card-text", { staticClass: "text--primary" }, [
-                _c("div", [_vm._v("Whitehaven Beach")]),
+                _c("div", [_c("strong", [_vm._v(" Descripcion:")])]),
                 _vm._v(" "),
-                _c("div", [_vm._v("Whitsunday Island, Whitsunday Islands")])
+                _c("div", [_vm._v(_vm._s(_vm.EventoDemo.Descripcion))])
               ]),
               _vm._v(" "),
               _c(
@@ -927,7 +935,14 @@ var render = function() {
                 [
                   _c(
                     "v-btn",
-                    { attrs: { color: "blue darken-1", type: "submit" } },
+                    {
+                      attrs: { color: "blue darken-1" },
+                      on: {
+                        click: function($event) {
+                          _vm.StateDemo = false
+                        }
+                      }
+                    },
                     [_vm._v("\n            Cerrar\n          ")]
                   )
                 ],

@@ -60,11 +60,13 @@
                     </v-col>
                     <v-col cols="12">
                         <v-select
-                        v-model="Evento.IdRestaurante"
+                        v-model="ItemEscogido"
                         :items="itemsSelect"
                         item-text="Nombre"
                         item-value="id"
-                        label="restaurante"
+                        label="ItemEscogido"
+                        persistent-hint
+          return-object
                         required
                         >
 
@@ -118,9 +120,6 @@ required
 
 
 <!-- Editar --->
-<v-dialog v-model="StateNuevo" persistent max-width="700px" >
-
-</v-dialog>
 
 <v-dialog v-model="StateEditar" persistent max-width="700px">
     <v-card  class="justify-center">
@@ -153,11 +152,13 @@ required
                     </v-col>
                     <v-col cols="12">
                         <v-select
-                        v-model="Evento.IdRestaurante"
+                        v-model="ItemEscogido"
                         :items="itemsSelect"
                         item-text="Nombre"
                         item-value="id"
-                        label="restaurante"
+                        label="ItemEscogido"
+                        persistent-hint
+          return-object
                         required
                         >
 
@@ -204,23 +205,23 @@ required
   <v-img
       class="white--text align-end"
       height="200px"
-      src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+      :src=" '/img/categorias/' + EventoDemo.Imagen"
     >
-    <v-card-title>Top 10 Australian beaches</v-card-title>
+    <v-card-title>{{EventoDemo.NombreEvento}}</v-card-title>
   </v-img>
   <v-card-subtitle class="pb-0">
-      Number 10
+     {{EventoDemo.Fecha}}
     </v-card-subtitle>
     <v-card-text class="text--primary">
-      <div>Whitehaven Beach</div>
+      <div><strong> Descripcion:</strong></div>
 
-      <div>Whitsunday Island, Whitsunday Islands</div>
+      <div>{{EventoDemo.Descripcion}}</div>
     </v-card-text>
 
       <v-card-actions>
 
 
-           <v-btn  color="blue darken-1" type="submit" >
+           <v-btn  color="blue darken-1" @click="StateDemo=false" >
             Cerrar
           </v-btn>
 
@@ -231,6 +232,7 @@ required
 
 
     </v-container>
+
 </template>
 
 <script>
@@ -238,6 +240,7 @@ export default {
     created() {
        axios.get('/Homeo').then(res=>{
             this.Eventos=res.data;
+
         })
     },
 
@@ -249,6 +252,7 @@ export default {
             idEditar:{id:0 ,index:0},
             File:[],
             FileEditar:[],
+            ItemEscogido:{id:1,Nombre:'leyo'},
             date:new Date().toISOString().substr(0, 10),
             Evento:{NombreEvento:'',Fecha:'',Imagen:[],Descripcion:'',IdRestaurante:1},
             EventoDemo:[],
@@ -287,12 +291,15 @@ export default {
         data.append('Fecha',NuevoEvento.Fecha);
         data.append('Imagen',this.File);
         data.append('Descripcion',NuevoEvento.Descripcion);
+        NuevoEvento.IdRestaurante=this.ItemEscogido.id;
         data.append('IdRestaurante',NuevoEvento.IdRestaurante);
          axios.post('/Home/Create', data, {headers: { 'Content-Type': 'multipart/form-data'}}).then((res) =>{
            const notaServidor = res;
             console.log(notaServidor);
             axios.get('/Homeo').then(res=>{
             this.Eventos=res.data;
+            this.File=[];
+            this.date=new Date().toISOString().substr(0, 10);
         })
 
          });
@@ -312,10 +319,10 @@ export default {
              console.log(this.idEditar.id);
             this.idEditar.index=index;
              this.StateEditar=true;
-             this.EventoDemo.NombreEvento=this.Eventos[index].NombreEvento;
-             this.EventoDemo.Fecha=this.Eventos[index].Fecha;
-             this.EventoDemo.Descripcion=this.Eventos[index].Descripcion;
-             this.EventoDemo.IdRestaurante=this.Eventos[index].IdRestaurante;
+             this.Evento.NombreEvento=this.Eventos[index].NombreEvento;
+             this.Evento.Fecha=this.Eventos[index].Fecha;
+             this.Evento.Descripcion=this.Eventos[index].Descripcion;
+             this.Evento.IdRestaurante=this.Eventos[index].IdRestaurante;
          },
          cancelar(){
             this.Evento={NombreEvento:'',Fecha:'',Imagen:{},Descripcion:'',IdRestaurante:''}
@@ -325,10 +332,8 @@ export default {
          Guardar(EventoGuardar){
 
         EventoGuardar.Fecha=this.date;
-
         EventoGuardar.Imagen=this.FileEditar;
-
-
+        EventoGuardar.IdRestaurante=this.ItemEscogido.id;
         const param={NombreEvento:EventoGuardar.NombreEvento,
         Fecha:EventoGuardar.Fecha,
 
@@ -352,11 +357,12 @@ export default {
              console.log(this.idEditar.id);
             this.idEditar.index=index;
              this.StateDemo=true;
-             this.Evento.NombreEvento=this.Eventos[index].NombreEvento;
-             this.Evento.Fecha=this.Eventos[index].Fecha;
-             this.Evento.Descripcion=this.Eventos[index].Descripcion;
-             this.Evento.IdRestaurante=this.Eventos[index].IdRestaurante;
-         }
+             this.EventoDemo.NombreEvento=this.Eventos[index].NombreEvento;
+             this.EventoDemo.Fecha=this.Eventos[index].Fecha;
+             this.EventoDemo.Descripcion=this.Eventos[index].Descripcion;
+             this.EventoDemo.Imagen=this.Eventos[index].Imagen;
+             this.EventoDemo.IdRestaurante=this.Eventos[index].IdRestaurante;
+         },
 
     }
 
