@@ -81,6 +81,14 @@ class EventosController extends Controller
         return $Encontrar;
     }
 
+    public function showAllEvent($id)
+    {
+        //
+        $Encontrar=DB::table('eventos')
+        ->where('eventos.idRestaurante', '=', $id)
+        ->get();
+        return $Encontrar;
+    }
     /**
      * Show the form for editing the specified resource.
      *
